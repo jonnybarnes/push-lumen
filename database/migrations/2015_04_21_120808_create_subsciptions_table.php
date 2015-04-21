@@ -17,7 +17,7 @@ class CreateSubsciptionsTable extends Migration
             $table->integer('topic_id')->unsigned();
             $table->foreign('topic_id')->references('id')->on('topics');
             $table->integer('subscriber_id')->unsigned();
-            $table->foreign('subscriber_id')->references('id')->on('subscibers');
+            $table->foreign('subscriber_id')->references('id')->on('subscribers');
             $table->timestamps();
         });
     }
