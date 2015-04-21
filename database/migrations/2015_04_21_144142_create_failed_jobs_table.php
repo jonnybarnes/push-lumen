@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSubscribersTable extends Migration
+class CreateFailedJobsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,12 @@ class CreateSubscribersTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscribers', function (Blueprint $table) {
+        Schema::create('failed_jobs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('url');
+            $table->text('connection');
+            $table->text('queue');
+            $table->text('payload');
+            $table->timestamp('failed_at');
         });
     }
 
@@ -25,6 +28,6 @@ class CreateSubscribersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subscribers');
+        Schema::drop('failed_jobs');
     }
 }
