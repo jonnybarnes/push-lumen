@@ -6,25 +6,60 @@ use GuzzleHttp\Client;
 
 class SendTopicUpdateNotification extends Job
 {
+    /**
+     * The Guzzle client
+     *
+     * @var \GuzzleHttp\Client
+     */
     protected $client;
+    
+    /**
+     * The subscriber’s callback URL
+     *
+     * @var string
+     */
     protected $callbackUrl;
+    
+    /**
+     * The topic’s URL
+     *
+     * @var string
+     */
     protected $topicUrl;
+    
+    /**
+     * The Cached data for the topic (Content-Type + hash)
+     *
+     * @var array
+     */
     protected $data;
 
-    public function __construct($callbackUrl, $topicUrl, array $data)
+    /**
+     * Construct the controller, we don’t want to allow redirects in Guzzle either
+     *
+     * @param string  The subscriber’s callback URL
+     * @param string  The topic URL
+     * @return void
+     */
+    public function __construct($callbackUrl, $topicUrl)
     {
         $this->client = new Client(['defaults' => ['allow_redirects' => false]]);
         $this->callbackUrl = $callbackUrl;
         $this->topicUrl = $topicUrl;
-        $this->topicData = $data;
+        $this->topicData = Cache::get($this->topicUrl);
     }
 
+    /**
+     * Do the job! That is, make a POST request to the subscriber’s URL with
+     * the notification payload.
+     *
+     * @return void
+     */
     public function handle()
     {
-        $topicData = Cache::get($this->topicUrl);
         $request = $this->client->createRequest('POST', $this->callbackUrl);
         $request->setHeader('Content-Type', $this->topicData['Content-Type']);
-        $request->setHeader('Link', env('HUB_URL') . '; rel=hub, ' . $this->topicUrl . '; rel=self');
+        $request->setHeader('Link', env('HUB_URL') .'; rel=hub, ' . $this->topicUrl . '; rel=self');
         //note if guzzle throws an exception, Lumen adds this back
         //to the queue automatically
         $response = $this->client->send($request);
