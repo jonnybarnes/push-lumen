@@ -15,4 +15,4 @@ $app->get('/', function () use ($app) {
     return 'A simple PuSH server';
 });
 
-$app->post('/', 'App\Http\Controllers\TopicsController@update');
+$app->post('/', 'App\Http\Controllers\HTTPPostController@checkMode');
