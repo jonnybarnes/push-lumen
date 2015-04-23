@@ -16,7 +16,6 @@ class HTTPPostController extends Controller
      */
     public function checkMode(Request $request)
     {
-        var_dump($request);
         if (null !== $request->input('hub_mode')) {
             switch ($request->input('hub_mode')) {
                 case 'publish':
