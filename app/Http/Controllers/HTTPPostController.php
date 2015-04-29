@@ -22,6 +22,16 @@ class HTTPPostController extends Controller
                     $t = new TopicsController();
                     $t->update($request);
                     break;
+
+                case 'subscribe':
+                    $s = new SubscriptionsController();
+                    $s->subscribe($request);
+                    break;
+
+                case 'unsubscribe':
+                    $s = new SubscriptionsController();
+                    $s->unsubscribe($request);
+                    break;
                 
                 default:
                     return (new Response('I don’t know this value for <code>hub.mode</code>', 501));
