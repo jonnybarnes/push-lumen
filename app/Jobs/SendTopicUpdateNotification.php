@@ -32,7 +32,7 @@ class SendTopicUpdateNotification extends Job
      *
      * @var array
      */
-    protected $data;
+    protected $topicData;
 
     /**
      * Construct the controller, we don’t want to allow redirects in Guzzle either
@@ -64,7 +64,7 @@ class SendTopicUpdateNotification extends Job
         //to the queue automatically
         $response = $this->client->send($request);
         //but I need to check for re-direct
-        if ($response->getStatusCode() == 302) {
+        if (substr($response->getStatusCode(), 0, 1) == 3) {
             //now throw my own exception to get Lumen to re-add to the queue
             throw new \Exception('Subcription callback URL sent a redirect response');
         }
