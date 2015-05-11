@@ -51,6 +51,7 @@ class VerifySubscriptionRequest extends Job
         $this->callbackUrl = $callbackUrl;
         $this->challenge = $challenge;
         $this->client = new Client(['defaults' => ['allow_redirects' => false]]);
+        date_default_timezone_set(env('APP_TIMEZONE'));
     }
 
     /**
@@ -84,7 +85,8 @@ class VerifySubscriptionRequest extends Job
                     DB::table('subscriptions')->insert(
                         [
                             'topic_id' => $topic_id,
-                            'subscriber_id' => $subscriber_id
+                            'subscriber_id' => $subscriber_id,
+                            'last_checked' => time()
                         ]
                     );
                     return true;
