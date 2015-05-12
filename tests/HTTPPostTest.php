@@ -11,7 +11,7 @@ class HTTPPostTest extends TestCase
 
     public function test501ResponseFromUnkownMode()
     {
-        $this->call('POST', '/', ['hub.mode' => 'unkown']);
+        $this->call('POST', '/', ['hub_mode' => 'unkown']);
 
         $this->assertResponseStatus(501);
     }
