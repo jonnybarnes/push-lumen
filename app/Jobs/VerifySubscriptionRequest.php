@@ -81,15 +81,38 @@ class VerifySubscriptionRequest extends Job
                 if (Cache::has($returnedChallenge)) {
                     //add the subscription
                     $topic_id = DB::table('topics')->where('url', $this->topicUrl)->pluck('id');
+                    if ($topic_id === null) {
+                        $topic_id = DB::table('topics')->insertGetId(
+                            ['url' => $this->topicUrl]
+                        );
+                    }
                     $subscriber_id = DB::table('subscribers')->where('url', $this->callbackUrl)->pluck('id');
-                    DB::table('subscriptions')->insert(
-                        [
-                            'topic_id' => $topic_id,
-                            'subscriber_id' => $subscriber_id,
-                            'last_checked' => time()
-                        ]
-                    );
-                    return true;
+                    if ($subscriber_id === null) {
+                        $subscriber_id = DB::table('subscribers')->insertGetId(
+                            ['url' => $this->callbackUrl]
+                        );
+                    }
+                    $sub = DB::table('subscriptions')
+                             ->where('topic_id', '=', $topic_id)
+                             ->where('subscriber_id', '=', $subscriber_id)
+                             ->first();
+                    if ($sub === null) {
+                        //new subscription
+                        DB::table('subscriptions')->insert(
+                            [
+                                'topic_id' => $topic_id,
+                                'subscriber_id' => $subscriber_id,
+                                'last_checked' => time()
+                            ]
+                        );
+                        return true;
+                    } else {
+                        //updated subscription
+                        DB::table('subscriptions')
+                          ->where('topic_id', '=', $topic_id)
+                          ->where('subscriber_id', '=', $subscriber_id)
+                          ->update(['last_checked', time()]);
+                    }
                 } else {
                     $this->delete();
                 }

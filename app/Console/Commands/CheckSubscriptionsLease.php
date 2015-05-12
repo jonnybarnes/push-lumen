@@ -1,8 +1,8 @@
 <?php namespace App\Console\Commands;
 
-use Illuminate\Conosle\Command;
+use Illuminate\Console\Command;
 
-class CheckSubscriptsionsLease extends Command
+class CheckSubscriptionsLease extends Command
 {
     /**
      * The console command name
