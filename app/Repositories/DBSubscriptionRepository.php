@@ -44,4 +44,13 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
             return true;
         }
     }
+
+    public function delete($topic_id, $subscriber_id)
+    {
+        DB::table('subscriptions')
+            ->where('subscriber_id', '=', $subscriber_id)
+            ->where('topic_id', '=', $topic_id)
+            ->delete();
+        return true;
+    }
 }
