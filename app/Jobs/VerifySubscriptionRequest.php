@@ -61,7 +61,7 @@ class VerifySubscriptionRequest extends Job
      *
      * @return ...
      */
-    public function handle()
+    public function handle(TopicRepositoryInterface $topic, SubscriberRepositoryInterface $subscriber, SubscriptionRepositoryInterface $subscription)
     {
         $this->challenge = bin2hex(openssl_random_pseudo_bytes(16));
         //now we cache the challenge value to check for when returned
@@ -80,39 +80,9 @@ class VerifySubscriptionRequest extends Job
                 $returnedChallenge = (string) $response->getBody();
                 if (Cache::has($returnedChallenge)) {
                     //add the subscription
-                    $topic_id = DB::table('topics')->where('url', $this->topicUrl)->pluck('id');
-                    if ($topic_id === null) {
-                        $topic_id = DB::table('topics')->insertGetId(
-                            ['url' => $this->topicUrl]
-                        );
-                    }
-                    $subscriber_id = DB::table('subscribers')->where('url', $this->callbackUrl)->pluck('id');
-                    if ($subscriber_id === null) {
-                        $subscriber_id = DB::table('subscribers')->insertGetId(
-                            ['url' => $this->callbackUrl]
-                        );
-                    }
-                    $sub = DB::table('subscriptions')
-                             ->where('topic_id', '=', $topic_id)
-                             ->where('subscriber_id', '=', $subscriber_id)
-                             ->first();
-                    if ($sub === null) {
-                        //new subscription
-                        DB::table('subscriptions')->insert(
-                            [
-                                'topic_id' => $topic_id,
-                                'subscriber_id' => $subscriber_id,
-                                'last_checked' => time()
-                            ]
-                        );
-                        return true;
-                    } else {
-                        //updated subscription
-                        DB::table('subscriptions')
-                          ->where('topic_id', '=', $topic_id)
-                          ->where('subscriber_id', '=', $subscriber_id)
-                          ->update(['last_checked', time()]);
-                    }
+                    $topic_id = $topic->getIdFromUrl($this->topicUrl);
+                    $subscriber_id = $subscriber->getIdFromUrl($this->callbackUrl);
+                    $subscription->upsert($topic_id, $subscriber_id);
                 } else {
                     $this->delete();
                 }

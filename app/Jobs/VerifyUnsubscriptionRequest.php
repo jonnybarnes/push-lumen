@@ -60,7 +60,7 @@ class VerifyUnsubscriptionRequest extends Job
      *
      * @return ...
      */
-    public function handle()
+    public function handle(TopicRepositoryInterface $topic, SubscriberRepositoryInterface $subscriber, SubscriptionRepositoryInterface $subscription)
     {
         $this->challenge = bin2hex(openssl_random_pseudo_bytes(16));
         //now we cache the challenge value to check for when returned
@@ -79,12 +79,9 @@ class VerifyUnsubscriptionRequest extends Job
                 $returnedChallenge = (string) $response->getBody();
                 if (Cache::has($returnedChallenge)) {
                     //delete the subscription
-                    $topic_id = DB::table('topics')->where('url', $this->topicUrl)->pluck('id');
-                    $subscriber_id = DB::table('subscribers')->where('url', $this->callbackUrl)->pluck('id');
-                    DB::table('subscriptions')
-                        ->where('subscriber_id', '=', $subscriber_id)
-                        ->where('topic_id', '=', $topic_id)
-                        ->delete();
+                    $topic_id = $topic->getIdFromUrl($this->topicUrl);
+                    $subscriber_id = $subscriber->getIdFromUrl($this->callbackUrl);
+                    $subscription->delete($topic_id, $subscriber_id);
                     return true;
                 } else {
                     $this->delete();
