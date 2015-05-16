@@ -23,6 +23,19 @@ class SubscriptionsController extends Controller
     protected $callbackUrl;
 
     /**
+     * Assing the values in our construct
+     *
+     * @param  string
+     * @param  string
+     * @return void
+     */
+    public function __construct($topicUrl = null, $callbackUrl = null)
+    {
+        $this->topicUrl = $topicUrl;
+        $this->$callbackUrl = $callbackUrl;
+    }
+
+    /**
      * Initiate a subscription
      *
      * @param  \Illuminate\Http\Request $request
