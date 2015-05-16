@@ -39,7 +39,7 @@ class CheckTopic extends Job
      *
      * @return void
      */
-    public function handle()
+    public function handle(TopicRepositoryInterface $topic)
     {
         $notify = false;
         $request = $this->client->createRequest('GET', $this->url);
@@ -70,13 +70,11 @@ class CheckTopic extends Job
             Cache::forever($this->url, $data);
         }
         if ($notify) {
-            $subs = DB::table('topics')
-                ->where('url', '=', $this->url)
-                ->join('subscriptions', 'topics.id', '=', 'subscriptions.topic_id')
-                ->join('subscribers', 'subscriptions.subscriber_id', '=', 'subscribers.id')
-                ->get();
-            foreach ($subs as $sub) {
-                Queue::push(new SendTopicUpdateNotification($sub->url, $this->url, $data));
+            $subs = $topic->getSubscribers($this->url);
+            if (null !== $subs) {
+                foreach ($subs as $sub) {
+                    Queue::push(new SendTopicUpdateNotification($sub->url, $this->url, $data));
+                }
             }
         }
     }
