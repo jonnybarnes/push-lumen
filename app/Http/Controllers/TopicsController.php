@@ -2,6 +2,7 @@
 
 use Queue;
 use League\Url\Url;
+use App\Jobs\CheckTopic;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
