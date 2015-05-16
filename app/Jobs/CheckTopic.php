@@ -5,6 +5,8 @@ use Cache;
 use Queue;
 use App\Jobs\Job;
 use GuzzleHttp\Client;
+use App\Jobs\SendTopicUpdateNotification;
+use App\Repositories\TopicRepositoryInterface;
 
 class CheckTopic extends Job
 {
