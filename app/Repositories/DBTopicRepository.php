@@ -12,10 +12,10 @@ class DBTopicRepository implements TopicRepositoryInterface
 
     public function getIdFromUrl($url)
     {
-        $topicId = DB::table('topics')->where('url', $this->callbackUrl)->pluck('id');
+        $topicId = DB::table('topics')->where('url', $url)->pluck('id');
         if ($topicId === null) {
             $topicId = DB::table('topics')->insertGetId(
-                ['url' => $this->callbackUrl]
+                ['url' => $url]
             );
         }
 
