@@ -1,7 +1,7 @@
 <?php namespace App\Repositories;
 
 use DB;
-use App\Repostories\TopicRepositoryInterface;
+use App\Interfaces\TopicRepositoryInterface;
 
 class DBTopicRepository implements TopicRepositoryInterface
 {
@@ -12,14 +12,14 @@ class DBTopicRepository implements TopicRepositoryInterface
 
     public function getIdFromUrl($url)
     {
-        $topic_id = DB::table('topics')->where('url', $this->callbackUrl)->pluck('id');
-        if ($topic_id === null) {
-            $topic_id = DB::table('topics')->insertGetId(
+        $topicId = DB::table('topics')->where('url', $this->callbackUrl)->pluck('id');
+        if ($topicId === null) {
+            $topicId = DB::table('topics')->insertGetId(
                 ['url' => $this->callbackUrl]
             );
         }
 
-        return $topic_id;
+        return $topicId;
     }
 
     public function getSubscribers($url)

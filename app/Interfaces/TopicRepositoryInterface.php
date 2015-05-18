@@ -1,4 +1,4 @@
-<?php namespace App\Repositories;
+<?php namespace App\Interfaces;
 
 interface TopicRepositoryInterface
 {

@@ -1,7 +1,7 @@
 <?php namespace App\Repositories;
 
 use DB;
-use App\Repostories\SubscriptionRepositoryInterface;
+use App\Interfaces\SubscriptionRepositoryInterface;
 
 class DBTopicRepository implements SubscriptionRepositoryInterface
 {
@@ -10,27 +10,27 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
         return DB::table('topics')->get();
     }
 
-    public function getIdFromUrls($topic_id, $subscriber_id)
+    public function getIdFromUrls($topicId, $subscriberId)
     {
         $sub = DB::table('subscriptions')
-                    ->where('topic_id', '=', $topic_id)
-                    ->where('subscriber_id', '=', $subscriber_id)
+                    ->where('topic_id', '=', $topicId)
+                    ->where('subscriber_id', '=', $subscriberId)
                     ->first();
         return $sub;
     }
 
-    public function upsert($topic_id, $subscriber_id, $time)
+    public function upsert($topicId, $subscriberId, $time)
     {
         $sub = DB::table('subscriptions')
-                 ->where('topic_id', '=', $topic_id)
-                 ->where('subscriber_id', '=', $subscriber_id)
+                 ->where('topic_id', '=', $topicId)
+                 ->where('subscriber_id', '=', $subscriberId)
                  ->first();
         if ($sub === null) {
             //new subscription
             DB::table('subscriptions')->insert(
                 [
-                    'topic_id' => $topic_id,
-                    'subscriber_id' => $subscriber_id,
+                    'topic_id' => $topicId,
+                    'subscriber_id' => $subscriberId,
                     'last_checked' => time()
                 ]
             );
@@ -38,18 +38,18 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
         } else {
             //updated subscription
             DB::table('subscriptions')
-              ->where('topic_id', '=', $topic_id)
-              ->where('subscriber_id', '=', $subscriber_id)
+              ->where('topic_id', '=', $topicId)
+              ->where('subscriber_id', '=', $subscriberId)
               ->update(['last_checked', time()]);
             return true;
         }
     }
 
-    public function delete($topic_id, $subscriber_id)
+    public function delete($topicId, $subscriberId)
     {
         DB::table('subscriptions')
-            ->where('subscriber_id', '=', $subscriber_id)
-            ->where('topic_id', '=', $topic_id)
+            ->where('subscriber_id', '=', $subscriberId)
+            ->where('topic_id', '=', $topicId)
             ->delete();
         return true;
     }
