@@ -27,11 +27,13 @@ class HTTPPostController extends Controller
                 case 'subscribe':
                     $subsController = new SubscriptionsController();
                     $subsController->subscribe($request);
+                    return (new Response('Subscription request received', 202));
                     break;
 
                 case 'unsubscribe':
                     $subsController = new SubscriptionsController();
                     $subsController->unsubscribe($request);
+                    return (new Response('Unsubscription request received', 202));
                     break;
 
                 default:

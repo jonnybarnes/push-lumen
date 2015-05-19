@@ -54,10 +54,7 @@ class SubscriptionsController extends Controller
             if (substr($this->callbackUrl, 0, 2) == '//') {
                 $this->callbackUrl->setScheme('http');
             }
-            Queue::push(new VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl));
-            return (new Response('Subscription request received', 202));
-        } else {
-            return (new Response('You are missing some parameters.', 400));
+            Queue::push(new VerifySubscriptionRequest((string) $this->topicUrl, (string) $this->callbackUrl));
         }
     }
 
@@ -80,10 +77,7 @@ class SubscriptionsController extends Controller
             if (substr($this->callbackUrl, 0, 2) == '//') {
                 $this->callbackUrl->setScheme('http');
             }
-            Queue::push(new VerifyUnsubscriptionRequest($this->topicUrl, $this->callbackUrl));
-            return (new Response('Unsubscription request received', 202));
-        } else {
-            return (new Response('You are missing some parameters.', 400));
+            Queue::push(new VerifyUnsubscriptionRequest((string) $this->topicUrl, (string) $this->callbackUrl));
         }
     }
 }
