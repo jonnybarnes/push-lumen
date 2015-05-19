@@ -39,7 +39,7 @@ class SubscriptionsController extends Controller
      * Initiate a subscription
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function subscribe(Request $request)
     {
@@ -62,7 +62,7 @@ class SubscriptionsController extends Controller
      * Initiaite an unsubscription request
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function unsubscribe(Request $request)
     {

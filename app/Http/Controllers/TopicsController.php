@@ -30,7 +30,7 @@ class TopicsController extends Controller
      * Here we simply queue the job of checking the topic url for updates
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function update(Request $request)
     {
