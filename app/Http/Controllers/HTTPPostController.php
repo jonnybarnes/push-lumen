@@ -19,25 +19,25 @@ class HTTPPostController extends Controller
         if (null !== $request->input('hub_mode')) {
             switch ($request->input('hub_mode')) {
                 case 'publish':
-                    $t = new TopicsController();
-                    $t->update($request);
+                    $topicsController = new TopicsController();
+                    $topicsController->update($request);
+                    return (new Response('Topic update request received', 202));
                     break;
 
                 case 'subscribe':
-                    $s = new SubscriptionsController();
-                    $s->subscribe($request);
+                    $subsController = new SubscriptionsController();
+                    $subsController->subscribe($request);
                     break;
 
                 case 'unsubscribe':
-                    $s = new SubscriptionsController();
-                    $s->unsubscribe($request);
+                    $subsController = new SubscriptionsController();
+                    $subsController->unsubscribe($request);
                     break;
-                
+
                 default:
                     return (new Response('I don’t know this value for <code>hub.mode</code>', 501));
                     break;
             }
-        } else {
             return (new Response('<code>hub.mode</code> must be set', 400));
         }
     }

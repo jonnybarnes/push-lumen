@@ -40,10 +40,7 @@ class TopicsController extends Controller
             if (substr($this->topicUrl, 0, 2) == '//') {
                 $this->topicUrl->setScheme('http');
             }
-            Queue::push(new CheckTopic($this->topicUrl));
-            return (new Response('Topic update notification accepted, thnanks.', 202));
-        } else {
-            return (new Response('You need to specify a topic URL', 400));
+            Queue::push(new CheckTopic((string) $this->topicUrl));
         }
     }
 }
