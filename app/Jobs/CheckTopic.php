@@ -6,7 +6,7 @@ use Queue;
 use App\Jobs\Job;
 use GuzzleHttp\Client;
 use App\Jobs\SendTopicUpdateNotification;
-use App\Repositories\TopicRepositoryInterface;
+use App\Interfaces\TopicRepositoryInterface;
 
 class CheckTopic extends Job
 {
@@ -32,7 +32,6 @@ class CheckTopic extends Job
      */
     public function __construct($url)
     {
-        $this->client = new Client();
         $this->url = $url;
     }
 
@@ -44,6 +43,7 @@ class CheckTopic extends Job
     public function handle(TopicRepositoryInterface $topic)
     {
         $notify = false;
+        $this->client = new Client();
         $request = $this->client->createRequest('GET', $this->url);
         $response = $this->client->send($request);
         $contentType = $response->getHeader('Content-Type');
@@ -75,7 +75,7 @@ class CheckTopic extends Job
             $subs = $topic->getSubscribers($this->url);
             if (null !== $subs) {
                 foreach ($subs as $sub) {
-                    Queue::push(new SendTopicUpdateNotification($sub->url, $this->url, $data));
+                    Queue::push(new SendTopicUpdateNotification($sub->url, $this->url));
                 }
             }
         }
