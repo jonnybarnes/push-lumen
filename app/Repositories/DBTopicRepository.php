@@ -25,7 +25,7 @@ class DBTopicRepository implements TopicRepositoryInterface
     public function getSubscribers($url)
     {
         $subs = DB::table('topics')
-                ->where('url', '=', $url)
+                ->where('topics.url', '=', $url)
                 ->join('subscriptions', 'topics.id', '=', 'subscriptions.topic_id')
                 ->join('subscribers', 'subscriptions.subscriber_id', '=', 'subscribers.id')
                 ->get();
