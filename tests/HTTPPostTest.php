@@ -15,4 +15,28 @@ class HTTPPostTest extends TestCase
 
         $this->assertResponseStatus(501);
     }
+
+    public function testQueueFromSuccessfulPublish()
+    {
+        Queue::shouldReceive('push')->once();
+        Queue::shouldReceive('connected')->once();
+
+        $this->call('POST', '/', ['hub_mode' => 'publish', 'hub_url' => 'https://example.org/']);
+
+        $this->assertResponseStatus(202);
+    }
+
+    public function testQueueFromSuccessfulSubscribe()
+    {
+        Queue::shouldReceive('push')->once();
+        Queue::shouldReceive('connect')->once();
+
+        $this->call('POST', '/', [
+            'hub_mode' => 'subscribe',
+            'hub_topic' => 'https://example.org/',
+            'hub_callback' => 'https://mysite.com/callback'
+        ]);
+
+        $this->assertResponseStatus(202);
+    }
 }

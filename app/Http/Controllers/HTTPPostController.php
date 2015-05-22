@@ -40,7 +40,7 @@ class HTTPPostController extends Controller
                     return (new Response('I don’t know this value for <code>hub.mode</code>', 501));
                     break;
             }
-            return (new Response('<code>hub.mode</code> must be set', 400));
         }
+        return (new Response('<code>hub.mode</code> must be set', 400));
     }
 }
