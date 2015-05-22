@@ -7,8 +7,6 @@ use GuzzleHttp\Client;
 
 class VerifySubscriptionRequest extends Job
 {
-    use \Illuminate\Queue\InteractsWithQueue;
-
     /**
      * The topic URL
      *
