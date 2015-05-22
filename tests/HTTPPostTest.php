@@ -39,4 +39,18 @@ class HTTPPostTest extends TestCase
 
         $this->assertResponseStatus(202);
     }
+
+    public function testQueueFromSuccessfulUnsubscribe()
+    {
+        Queue::shouldReceive('push')->once();
+        Queue::shouldReceive('connect')->once();
+
+        $this->call('POST', '/', [
+            'hub_mode' => 'unsubscribe',
+            'hub_topic' => 'https://example.org/',
+            'hub_callback' => 'https://mysite.com/callback'
+        ]);
+
+        $this->assertResponseStatus(202);
+    }
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use App\Jobs\VerifySubscriptionRequest;
+use App\Jobs\VerifyUnsubscriptionRequest;
 
 class SubscriptionsController extends Controller
 {

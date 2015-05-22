@@ -7,8 +7,6 @@ use GuzzleHttp\Client;
 
 class VerifyUnsubscriptionRequest extends Job
 {
-    use \Illuminate\Queue\InteractsWithQueue;
-
     /**
      * The topic URL
      *
