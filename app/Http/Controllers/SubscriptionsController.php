@@ -5,6 +5,7 @@ use League\Url\Url;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Jobs\VerifySubscriptionRequest;
 
 class SubscriptionsController extends Controller
 {
@@ -32,7 +33,7 @@ class SubscriptionsController extends Controller
     public function __construct($topicUrl = null, $callbackUrl = null)
     {
         $this->topicUrl = $topicUrl;
-        $this->$callbackUrl = $callbackUrl;
+        $this->callbackUrl = $callbackUrl;
     }
 
     /**
