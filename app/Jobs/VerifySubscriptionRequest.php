@@ -59,8 +59,11 @@ class VerifySubscriptionRequest extends Job
      *
      * @return ...
      */
-    public function handle(TopicRepositoryInterface $topic, SubscriberRepositoryInterface $subscriber, SubscriptionRepositoryInterface $subscription)
-    {
+    public function handle(
+        TopicRepositoryInterface $topic,
+        SubscriberRepositoryInterface $subscriber,
+        SubscriptionRepositoryInterface $subscription
+    ) {
         $this->challenge = bin2hex(openssl_random_pseudo_bytes(16));
         //now we cache the challenge value to check for when returned
         Cache::put($this->challenge, [$this->topicUrl, $this->callbackUrl], 30);
@@ -78,9 +81,9 @@ class VerifySubscriptionRequest extends Job
                 $returnedChallenge = (string) $response->getBody();
                 if (Cache::has($returnedChallenge)) {
                     //add the subscription
-                    $topic_id = $topic->getIdFromUrl($this->topicUrl);
-                    $subscriber_id = $subscriber->getIdFromUrl($this->callbackUrl);
-                    $subscription->upsert($topic_id, $subscriber_id);
+                    $topicId = $topic->getIdFromUrl($this->topicUrl);
+                    $subscriberId = $subscriber->getIdFromUrl($this->callbackUrl);
+                    $subscription->upsert($topicId, $subscriberId);
                 } else {
                     $this->delete();
                 }
