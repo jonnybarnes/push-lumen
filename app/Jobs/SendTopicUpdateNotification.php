@@ -3,6 +3,7 @@
 use Cache;
 use App\Jobs\Job;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 
 class SendTopicUpdateNotification extends Job
 {
@@ -12,21 +13,21 @@ class SendTopicUpdateNotification extends Job
      * @var \GuzzleHttp\Client
      */
     protected $client;
-    
+
     /**
      * The subscriber’s callback URL
      *
      * @var string
      */
     protected $callbackUrl;
-    
+
     /**
      * The topic’s URL
      *
      * @var string
      */
     protected $topicUrl;
-    
+
     /**
      * The Cached data for the topic (Content-Type + hash)
      *
@@ -39,11 +40,12 @@ class SendTopicUpdateNotification extends Job
      *
      * @param string  The subscriber’s callback URL
      * @param string  The topic URL
+     * @param GuzzleHttp\Client
      * @return void
      */
-    public function __construct($callbackUrl, $topicUrl)
+    public function __construct($callbackUrl, $topicUrl, Client $client = null)
     {
-        $this->client = new Client(['defaults' => ['allow_redirects' => false]]);
+        $this->client = $client ?: new Client(['allow_redirects' => false]);
         $this->callbackUrl = $callbackUrl;
         $this->topicUrl = $topicUrl;
         $this->topicData = Cache::get($this->topicUrl);
@@ -57,9 +59,14 @@ class SendTopicUpdateNotification extends Job
      */
     public function handle()
     {
-        $request = $this->client->createRequest('POST', $this->callbackUrl);
-        $request->setHeader('Content-Type', $this->topicData['Content-Type']);
-        $request->setHeader('Link', env('HUB_URL') .'; rel=hub, ' . $this->topicUrl . '; rel=self');
+        //set the request headers
+        $headers = [
+            'Content-Type' => $this->topicData['Content-Type'],
+            'Link' => env('HUB_URL') .'; rel=hub, ' . $this->topicUrl . '; rel=self'
+        ];
+        //create the request
+        $request = new Request('POST', $this->callabkUrl, $headers);
+
         //note if guzzle throws an exception, Lumen adds this back
         //to the queue automatically
         $response = $this->client->send($request);
