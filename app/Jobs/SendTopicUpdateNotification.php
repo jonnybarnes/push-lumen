@@ -65,7 +65,7 @@ class SendTopicUpdateNotification extends Job
             'Link' => env('HUB_URL') .'; rel=hub, ' . $this->topicUrl . '; rel=self'
         ];
         //create the request
-        $request = new Request('POST', $this->callabkUrl, $headers);
+        $request = new Request('POST', $this->callbackUrl, $headers);
 
         //note if guzzle throws an exception, Lumen adds this back
         //to the queue automatically
