@@ -43,12 +43,12 @@ class VerifySubscriptionRequest extends Job
      * @param DB
      * @return void
      */
-    public function __construct($topicUrl, $callbackUrl, $challenge = null)
+    public function __construct($topicUrl, $callbackUrl, Client $client = null)
     {
         $this->topicUrl = $topicUrl;
         $this->callbackUrl = $callbackUrl;
-        $this->challenge = $challenge;
-        $this->client = new Client(['defaults' => ['allow_redirects' => false]]);
+        $this->challenge = null;
+        $this->client = $client ?: new Client(['allow_redirects' => false]);
         date_default_timezone_set(env('APP_TIMEZONE'));
     }
 
@@ -67,15 +67,17 @@ class VerifySubscriptionRequest extends Job
         $this->challenge = bin2hex(openssl_random_pseudo_bytes(16));
         //now we cache the challenge value to check for when returned
         Cache::put($this->challenge, [$this->topicUrl, $this->callbackUrl], 30);
-        $request = $this->client->createRequest('GET', $this->callbackUrl);
-        $query = $request->getQuery();
-        $query['hub.mode'] = 'subscribe';
-        $query['hub.topic'] = $this->topicUrl;
-        $query['hub.challenge'] = $this->challenge;
-        $query['hub.lease_seconds'] = env('HUB_LEASE_SECONDS');
-        //Guzzle throws some Exceptions, we don’t want Laravel automatically re-tring these
+
+        //Guzzle throws some Exceptions, we don’t want Lumen automatically re-tring these
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->get($this->callbackUrl, [
+                'query' => [
+                    'hub.mode' => 'subscribe',
+                    'hub.topic' => $this->topicUrl,
+                    'hub.challenge' => $this->challenge,
+                    'hub.lease_seconds' => env('HUB_LEASE_SECONDS')
+                ]
+            ]);
             if (substr($response->getStatusCode(), 0, 1) == '2') {
                 //now check challenge response
                 $returnedChallenge = (string) $response->getBody();
