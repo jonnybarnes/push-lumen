@@ -4,7 +4,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Tests\Server;
 
 class SubscriptionJobsTest extends TestCase
 {
@@ -40,6 +39,18 @@ class SubscriptionJobsTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         $job = new App\Jobs\SendTopicUpdateNotification($this->topicUrl, $this->callbackUrl, $client);
+        $job->handle();
+    }
+
+    public function testVerifySubscriptionRequest()
+    {
+        $mock = new MockHandler([
+            new Response(200, [], 'test')
+        ]);
+        $handler = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handler]);
+
+        $job = new App\Jobs\VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
         $job->handle();
     }
 }
