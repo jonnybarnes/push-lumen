@@ -4,6 +4,9 @@ use DB;
 use Cache;
 use App\Jobs\Job;
 use GuzzleHttp\Client;
+use App\Interfaces\TopicRepositoryInterface;
+use App\Interfaces\SubscriberRepositoryInterface;
+use App\Interfaces\SubscriptionRepositoryInterface;
 
 class VerifySubscriptionRequest extends Job
 {

@@ -44,13 +44,22 @@ class SubscriptionJobsTest extends TestCase
 
     public function testVerifySubscriptionRequest()
     {
-        $mock = new MockHandler([
+        $guzzleMock = new MockHandler([
             new Response(200, [], 'test')
         ]);
-        $handler = HandlerStack::create($mock);
+        $handler = HandlerStack::create($guzzleMock);
         $client = new Client(['handler' => $handler]);
 
+        $topicMock = Mockery::mock('App\Interfaces\TopicRepositoryInterface');
+        $topicMock->shouldReceive('getIdFromUrl')->andReturn(1);
+
+        $subscriberMock = Mockery::mock('App\Interfaces\SubscriberRepositoryInterface');
+        $subscriberMock->shouldReceive('getIdFromUrl')->andReturn(2);
+
+        $subscriptionMock = Mockery::mock('App\Interfaces\SubscriptionRepositoryInterface');
+        $subscriptionMock->shouldReceive('upsert')->andReturn(true);
+
         $job = new App\Jobs\VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
-        $job->handle();
+        $job->handle($topicMock, $subscriberMock, $subscriptionMock);
     }
 }

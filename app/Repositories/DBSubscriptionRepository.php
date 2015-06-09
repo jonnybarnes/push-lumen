@@ -19,8 +19,9 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
         return $sub;
     }
 
-    public function upsert($topicId, $subscriberId, $time)
+    public function upsert($topicId, $subscriberId, $time = null)
     {
+        $this->time = $time ?: time();
         $sub = DB::table('subscriptions')
                  ->where('topic_id', '=', $topicId)
                  ->where('subscriber_id', '=', $subscriberId)
@@ -31,7 +32,7 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
                 [
                     'topic_id' => $topicId,
                     'subscriber_id' => $subscriberId,
-                    'last_checked' => time()
+                    'last_checked' => $this->time;
                 ]
             );
             return true;
@@ -40,7 +41,7 @@ class DBTopicRepository implements SubscriptionRepositoryInterface
             DB::table('subscriptions')
               ->where('topic_id', '=', $topicId)
               ->where('subscriber_id', '=', $subscriberId)
-              ->update(['last_checked', time()]);
+              ->update(['last_checked', $this->time]);
             return true;
         }
     }

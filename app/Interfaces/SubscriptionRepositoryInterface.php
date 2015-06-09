@@ -23,10 +23,9 @@ interface SubscriptionRepositoryInterface
      *
      * @param  int
      * @param  int
-     * @param  int
      * @return bool
      */
-    public function upsert($topicId, $subscriberId, $time);
+    public function upsert($topicId, $subscriberId);
 
     /**
      * Delete a subscription
