@@ -69,7 +69,7 @@ class VerifySubscriptionRequest extends Job
     ) {
         Cache::put($this->challenge, [$this->topicUrl, $this->callbackUrl], 30);
 
-        //Guzzle throws some Exceptions, we don’t want Lumen automatically re-tring these
+        //Guzzle throws some Exceptions, we don’t want Lumen automatically re-try these
         try {
             $response = $this->client->get($this->callbackUrl, [
                 'query' => [
@@ -87,14 +87,18 @@ class VerifySubscriptionRequest extends Job
                     $topicId = $topic->getIdFromUrl($this->topicUrl);
                     $subscriberId = $subscriber->getIdFromUrl($this->callbackUrl);
                     $subscription->upsert($topicId, $subscriberId);
+                    return true;
                 } else {
                     $this->delete();
+                    return false;
                 }
             } else {
                 $this->delete();
+                return false;
             }
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             $this->delete();
+            return false;
         }
     }
 }

@@ -42,7 +42,7 @@ class SubscriptionJobsTest extends TestCase
         $job->handle();
     }
 
-    public function testVerifySubscriptionRequest()
+    public function testVerifySubscriptionRequestSuccess()
     {
         $guzzleMock = new MockHandler([
             new Response(200, [], 'test')
@@ -60,6 +60,69 @@ class SubscriptionJobsTest extends TestCase
         $subscriptionMock->shouldReceive('upsert')->andReturn(true);
 
         $job = new App\Jobs\VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
-        $job->handle($topicMock, $subscriberMock, $subscriptionMock);
+        $this->assertTrue($job->handle($topicMock, $subscriberMock, $subscriptionMock));
+    }
+
+    public function testVerifySubscriptionRequestFailureStatusCode()
+    {
+        $guzzleMock = new MockHandler([
+            new Response(500, [])
+        ]);
+        $handler = HandlerStack::create($guzzleMock);
+        $client = new Client(['handler' => $handler]);
+
+        $topicMock = Mockery::mock('App\Interfaces\TopicRepositoryInterface');
+        $topicMock->shouldReceive('getIdFromUrl')->andReturn(1);
+
+        $subscriberMock = Mockery::mock('App\Interfaces\SubscriberRepositoryInterface');
+        $subscriberMock->shouldReceive('getIdFromUrl')->andReturn(2);
+
+        $subscriptionMock = Mockery::mock('App\Interfaces\SubscriptionRepositoryInterface');
+        $subscriptionMock->shouldReceive('upsert')->andReturn(true);
+
+        $job = new App\Jobs\VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
+        $this->assertFalse($job->handle($topicMock, $subscriberMock, $subscriptionMock));
+    }
+
+    public function testVerifySubscriptionRequestFailureWithCache()
+    {
+        $guzzleMock = new MockHandler([
+            new Response(200, [], 'not-test')
+        ]);
+        $handler = HandlerStack::create($guzzleMock);
+        $client = new Client(['handler' => $handler]);
+
+        $topicMock = Mockery::mock('App\Interfaces\TopicRepositoryInterface');
+        $topicMock->shouldReceive('getIdFromUrl')->andReturn(1);
+
+        $subscriberMock = Mockery::mock('App\Interfaces\SubscriberRepositoryInterface');
+        $subscriberMock->shouldReceive('getIdFromUrl')->andReturn(2);
+
+        $subscriptionMock = Mockery::mock('App\Interfaces\SubscriptionRepositoryInterface');
+        $subscriptionMock->shouldReceive('upsert')->andReturn(true);
+
+        $job = new App\Jobs\VerifySubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
+        $this->assertFalse($job->handle($topicMock, $subscriberMock, $subscriptionMock));
+    }
+
+    public function testVerifyUnsubscriptionRequestSuccess()
+    {
+        $guzzleMock = new MockHandler([
+            new Response(200, [], 'test')
+        ]);
+        $handler = HandlerStack::create($guzzleMock);
+        $client = new Client(['handler' => $handler]);
+
+        $topicMock = Mockery::mock('App\Interfaces\TopicRepositoryInterface');
+        $topicMock->shouldReceive('getIdFromUrl')->andReturn(1);
+
+        $subscriberMock = Mockery::mock('App\Interfaces\SubscriberRepositoryInterface');
+        $subscriberMock->shouldReceive('getIdFromUrl')->andReturn(2);
+
+        $subscriptionMock = Mockery::mock('App\Interfaces\SubscriptionRepositoryInterface');
+        $subscriptionMock->shouldReceive('delete')->andReturn(true);
+
+        $job = new App\Jobs\VerifyUnsubscriptionRequest($this->topicUrl, $this->callbackUrl, $client, 'test');
+        $this->assertTrue($job->handle($topicMock, $subscriberMock, $subscriptionMock));
     }
 }
