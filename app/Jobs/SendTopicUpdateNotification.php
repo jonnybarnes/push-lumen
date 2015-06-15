@@ -75,5 +75,6 @@ class SendTopicUpdateNotification extends Job
             //now throw my own exception to get Lumen to re-add to the queue
             throw new \Exception('Subcription callback URL sent a redirect response');
         }
+        return true;
     }
 }
