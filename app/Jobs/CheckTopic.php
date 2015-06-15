@@ -30,9 +30,10 @@ class CheckTopic extends Job
      * @param string  Thus URL of the topic
      * @return void
      */
-    public function __construct($url)
+    public function __construct($url, Client $client = null)
     {
         $this->url = $url;
+        $this->client = $client ?: new Client();
     }
 
     /**
@@ -43,9 +44,7 @@ class CheckTopic extends Job
     public function handle(TopicRepositoryInterface $topic)
     {
         $notify = false;
-        $this->client = new Client();
-        $request = $this->client->createRequest('GET', $this->url);
-        $response = $this->client->send($request);
+        $response = $this->client->get($this->url);
         $contentType = $response->getHeader('Content-Type');
         $hash = md5((string) $response->getBody());
         if (Cache::has($this->url)) {
@@ -77,7 +76,10 @@ class CheckTopic extends Job
                 foreach ($subs as $sub) {
                     Queue::push(new SendTopicUpdateNotification($sub->url, $this->url));
                 }
+                return 1;
             }
+            return 0;
         }
+        return 0;
     }
 }
