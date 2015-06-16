@@ -1,7 +1,6 @@
 <?php namespace App\Http\Controllers;
 
 use Queue;
-use League\Url\Url;
 use App\Jobs\CheckTopic;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -9,13 +8,6 @@ use App\Http\Controllers\Controller;
 
 class TopicsController extends Controller
 {
-    /**
-     * The topic URL
-     *
-     * @var \League\Url\Url
-     */
-    protected $topicUrl;
-
     /**
      * Assing the values in our construct
      *
@@ -26,6 +18,7 @@ class TopicsController extends Controller
     {
         $this->topicUrl = $topicUrl;
     }
+    
     /**
      * Here we simply queue the job of checking the topic url for updates
      *
@@ -36,11 +29,7 @@ class TopicsController extends Controller
     {
         //hub.mode has already been checked to be `publish`
         if (null !== $request->input('hub_url')) {
-            $this->topicUrl = Url::createFromUrl($request->input('hub_url'));
-            if (substr($this->topicUrl, 0, 2) == '//') {
-                $this->topicUrl->setScheme('http');
-            }
-            Queue::push(new CheckTopic((string) $this->topicUrl));
+            Queue::push(new CheckTopic($request->input('hub_url')));
         }
     }
 }
