@@ -1,21 +1,42 @@
-## Lumen PHP Framework
+## A simple PuSH server
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/downloads.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+A very simple [PuSH](https://github.com/pubsubhubbub/PubSubHubbub) server,
+mainly (IndieWeb)[https://indiewebcamp.com] oriented.
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+### Requirements
 
-## Official Documentation
+This app is based on [Lumen](http://lumen.laravel.com) and therefore has the
+same requirements as Lumen. Namely:
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+- PHP >= 5.4
+- Mcrypt extension
+- OpenSSL extension
+- Mbstring extension
+- Tokenizer extension
 
-## Security Vulnerabilities
+Lumen also needs write access to the `storage/` folder.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+### Installation
 
-### License
+Firstly clone the git repo. Then copy `.env.example` to `.env` and edit as
+necessary. At least the `DB_*` values will need to be set, as well as
+`APP_TIMEZONE`. A sensible default value for the hub’s lease time has been set,
+but you can also edit this if you wish.
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Next run
+
+    composer install --no-dev
+
+followed by
+
+    php artisan migrate
+
+to install the dependencies and set up the database tables.
+
+The server also runs a job daily to check if any subscription’s leases have
+expired, and if so, remove the subscription. Lumen makes this quite easy. One
+cron job needs to be added to your server. Just added
+
+    * * * * * php /path/to/push/artisan schedule:run 1>> /dev/null 2>&1
+
+Now you should be good to go.
