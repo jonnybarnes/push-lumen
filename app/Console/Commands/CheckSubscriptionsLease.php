@@ -29,7 +29,7 @@ class CheckSubscriptionsLease extends Command
         $subs = DB::table('subscriptions')->get();
 
         //get the current time (in the correct TZ)
-        date_default_timezone_set('Europe/London');
+        date_default_timezone_set(env('APP_TIMEZONE'));
         $now = time();
 
         //delete subscriptions with expired leases
