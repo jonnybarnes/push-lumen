@@ -10,5 +10,8 @@ before_install:
 install:
   - travis_retry composer install --prefer-source --no-interaction
 
+before_script:
+  - cp .env.travis .env
+
 script:
   - vendor/bin/phpunit --verbose --coverage-text
