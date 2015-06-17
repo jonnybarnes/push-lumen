@@ -1,7 +1,7 @@
 ## A simple PuSH server
 
 A very simple [PuSH](https://github.com/pubsubhubbub/PubSubHubbub) server,
-mainly (IndieWeb)[https://indiewebcamp.com] oriented.
+mainly [IndieWeb](https://indiewebcamp.com) oriented.
 
 ### Requirements
 
