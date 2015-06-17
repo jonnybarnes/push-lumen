@@ -24,11 +24,11 @@ but you can also edit this if you wish.
 
 Next run
 
-    composer install --no-dev
+    $ composer install --no-dev
 
 followed by
 
-    php artisan migrate
+    $ php artisan migrate
 
 to install the dependencies and set up the database tables.
 
