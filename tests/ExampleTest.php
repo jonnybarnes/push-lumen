@@ -9,9 +9,7 @@ class ExampleTest extends TestCase {
      */
     public function testBasicExample()
     {
-        $response = $this->call('GET', '/');
-
-        $this->assertResponseOk();
+        $this->visit('/')
+          ->see('A simple PuSH server');
     }
-
 }

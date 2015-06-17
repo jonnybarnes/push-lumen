@@ -46,12 +46,12 @@ class VerifyUnsubscriptionRequest extends Job
      * @param DB
      * @return void
      */
-    public function __construct($topicUrl, $callbackUrl, Client $client = null)
+    public function __construct($topicUrl, $callbackUrl, Client $client = null, $challenge = null)
     {
         $this->topicUrl = $topicUrl;
         $this->callbackUrl = $callbackUrl;
-        $this->challenge = null;
         $this->client = $client ?: new Client(['allow_redirects' => false]);
+        $this->challenge = $challenge ?: bin2hex(openssl_random_pseudo_bytes(16));
     }
 
     /**
@@ -66,8 +66,7 @@ class VerifyUnsubscriptionRequest extends Job
         SubscriberRepositoryInterface $subscriber,
         SubscriptionRepositoryInterface $subscription
     ) {
-        $this->challenge = bin2hex(openssl_random_pseudo_bytes(16));
-        //now we cache the challenge value to check for when returned
+        //we cache the challenge value to check for when returned
         Cache::put($this->challenge, [$this->topicUrl, $this->callbackUrl], 30);
         //Guzzle throws some Exceptions, we don’t want Lumen automatically re-tring these
         try {

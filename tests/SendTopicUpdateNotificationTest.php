@@ -9,6 +9,7 @@ class SendTopicUpdateNotificationTest extends TestCase
 {
     public function setUp()
     {
+        parent::setUp();
         $this->callbackUrl = 'https://bob.com/callback';
         $this->topicUrl = 'https://alice.com/notes';
     }

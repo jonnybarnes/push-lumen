@@ -9,6 +9,7 @@ class SubscriptionJobsTest extends TestCase
 {
     public function setUp()
     {
+        parent::setUp();
         $this->topicUrl = 'http://alice.com/notes';
         $this->callbackUrl = 'http://bob.com/callback';
         Cache::put($this->topicUrl, ['Content-Type' => 'text/html'], 5);

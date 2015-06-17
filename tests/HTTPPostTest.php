@@ -19,7 +19,6 @@ class HTTPPostTest extends TestCase
     public function testQueueFromSuccessfulPublish()
     {
         Queue::shouldReceive('push')->once();
-        Queue::shouldReceive('connected')->once();
 
         $this->call('POST', '/', ['hub_mode' => 'publish', 'hub_url' => 'https://example.org/']);
 
@@ -29,7 +28,6 @@ class HTTPPostTest extends TestCase
     public function testQueueFromSuccessfulSubscribe()
     {
         Queue::shouldReceive('push')->once();
-        Queue::shouldReceive('connect')->once();
 
         $this->call('POST', '/', [
             'hub_mode' => 'subscribe',
@@ -43,7 +41,6 @@ class HTTPPostTest extends TestCase
     public function testQueueFromSuccessfulUnsubscribe()
     {
         Queue::shouldReceive('push')->once();
-        Queue::shouldReceive('connect')->once();
 
         $this->call('POST', '/', [
             'hub_mode' => 'unsubscribe',

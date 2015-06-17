@@ -9,6 +9,7 @@ class CheckTopicTest extends TestCase
 {
     public function setUp()
     {
+        parent::setUp();
         $this->url = 'https://alice.com/notes';
         Cache::put($this->url, ['Content-Type' => 'text/html', 'hash' => 1], 5);
     }
@@ -33,9 +34,8 @@ class CheckTopicTest extends TestCase
     public function testCheckTopic()
     {
         //let’s not actually use the Queue...
-        Queue::shouldReceive('push')->once();
-        Queue::shouldReceive('connected')->once();
-        
+        Queue::shouldReceive('push')->twice();
+
         //we need to set up a mock guzzle client
         $mock = new MockHandler([
             new Response(200)
