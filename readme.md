@@ -44,3 +44,12 @@ cron job needs to be added to your server. Just add
     * * * * * php /path/to/push/artisan schedule:run 1>> /dev/null 2>&1
 
 Now you should be good to go.
+
+### Testing
+
+You’ll want to run `composer install --dev` to get the development dependencies.
+Then run
+
+    vendor/bin/phpunit
+
+to run the tests.
